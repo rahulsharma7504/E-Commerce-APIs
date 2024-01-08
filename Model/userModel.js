@@ -17,6 +17,10 @@ const schema = mongoose.Schema({
         type: String,
         required: true
     },
+    image:{
+        type:String,
+        required:true
+    },
     type: { // Changed from 'Type' to 'type'
         type: String,
         required: true
@@ -24,4 +28,4 @@ const schema = mongoose.Schema({
 });
 
 const User_model = mongoose.model('User', schema);
-module.exports = User_model;
+module.exports ={ User_model};

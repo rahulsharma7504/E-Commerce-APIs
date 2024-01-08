@@ -1,0 +1,16 @@
+{
+  "name": "e-commerce",
+  "version": "1.0.0",
+  "description": "RestFul-APIs",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "start index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "E-Commerce"
+  },
+  "author": "Rahul Sharma",
+  "license": "ISC"
+}

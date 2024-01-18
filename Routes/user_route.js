@@ -4,6 +4,7 @@ const app = express();
 const multer = require('multer');
 const path = require('path');
 
+const Auth=require('../middleware/Auth')
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, path.join(__dirname, '../images/user_image')); // Specify the destination folder, for example, 'uploads'
@@ -20,6 +21,16 @@ const userController = require('../Controller/user_controller');
 
 // Use multer middleware for handling file uploads if needed
 app.post('/register', upload.single('image'), userController.register);
+app.get('/login',userController.Login);
 app.post('/login',userController.Login);
+app.get('/login/auth',Auth,(req,res)=>{
+    // res.status(200).send({msg:"token verified"})
+
+})
+
+// For user Update password
+
+app.post('/update_password', userController.updatePassword);
+
 
 module.exports = app;

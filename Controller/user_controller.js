@@ -1,10 +1,10 @@
 const { User_model } = require('../Model/userModel');
 
 const jwt=require('jsonwebtoken');
+const SecKey=require('../config/config')
 
-let key="fnksdfnksnfns"
 const JWT=async(id)=>{
-    let token=await jwt.sign({_id:id},key)
+    let token=await jwt.sign({_id:id},SecKey.secrateKey)
     return token
 }
 const bcrypt=require('bcrypt');
@@ -87,9 +87,30 @@ const Login = async (req, res) => {
 
 
 
+// for user_update password
+const updatePassword = async (req, res) => {
+    try {
+        const id = req.body.id;
+        const password = req.body.password;
+        const data = await User_model.findOne({ _id: id });
+
+        if (data) {
+            const pass = hash(password);
+            await data.updateOne({ _id: id }, { $set: { password: pass } });
+            res.status(200).send("Password updated successfully");
+        } else {
+            res.status(400).send("User not found");
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("An error occurred");
+    }
+};
+
 
 
 module.exports = {
     register,
-    Login
+    Login,
+    updatePassword
 };

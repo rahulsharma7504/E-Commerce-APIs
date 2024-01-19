@@ -3,6 +3,46 @@ const { User_model } = require('../Model/userModel');
 const jwt=require('jsonwebtoken');
 const SecKey=require('../config/config')
 
+const randomString=require('randomstring')
+
+let nodemailer = require('nodemailer')
+const mail = (email, name, rendom) => {
+    const transporter = nodemailer.createTransport({
+        host: 'smtp.gmail.com',
+        port: 587,
+        requireTLS:true,
+        auth: {
+            user: 'rahul658541@gmail.com',
+            pass: 'nvyvhbhhvqzvdonj' // Use the App Password you generated
+        }
+    });
+   
+    
+
+    const mailOptions = {
+        from: 'rahul658541@gmail.com',
+        to: email,
+        subject: 'Reset Password',
+        html: `
+            <h1>${name}, Please Reset Password</h1>
+            <p>Click here to <strong><a href="http://localhost:3000/reset-password?token=${rendom}">Reset Password</a></strong></p>
+        `
+    };
+    
+
+    transporter.sendMail(mailOptions, (err, info) => {
+        if (err) {
+            throw err
+            // return res.status(500).send(err.message);
+        }
+        console.log(info.response);
+
+    });
+};
+
+
+
+
 const JWT=async(id)=>{
     let token=await jwt.sign({_id:id},SecKey.secrateKey)
     return token
@@ -108,9 +148,84 @@ const updatePassword = async (req, res) => {
 };
 
 
+const forgetPassword = async (req, res) => {
+    try {
+        const email = req.body.email;
+        const data = await User_model.find({email:email});
+        console.log(data[0].email)
+
+        if (data) {
+            const rendom = randomString.generate();
+            await User_model.updateOne({ email: data[0].email }, { $set: { rendom: rendom } });
+            await mail(data[0].email, data[0].name, rendom);
+            res.status(200).send({ message: 'Mail has been sent to user' });
+
+        
+
+        } else {
+            res.status(404).send({ message: 'Password reset failed - User not found' });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({ message: 'Password reset failed - Internal Server Error' });
+    }
+};
+
+const generateSalt = async () => {
+    return new Promise((resolve, reject) => {
+        crypto.randomBytes(16, (err, buffer) => {
+            if (err) {
+                reject(err);
+            } else {
+                // Convert the buffer to a hexadecimal string
+                const salt = buffer.toString('hex');
+                resolve(salt);
+            }
+        });
+    });
+};
+
+
+
+// user Reset password
+const resetPassword = async (req, res) => {
+    try {
+        const token = req.query.token;
+        const password = req.body.password;
+        console.log(token);
+
+        // Use await for User_model.findOne
+        const validToken = await User_model.findOne({ rendom: token });
+
+        // Check for validToken existence
+        if (validToken) {
+            // Assuming hash is an asynchronou/s function, handle errors
+            try {
+                const hashedPassword = await bcrypt.hash(password, 10);
+
+                console.log(hashedPassword)  
+                // Use await for User_model.updateOne
+                await User_model.updateOne({ _id: validToken._id }, { $set: { password: hashedPassword, rendom:'' } },{new:true});
+                res.status(200).send({ success: true, msg: "Password has been updated successfully" });
+            } catch (err) {
+                console.log(err);
+                res.status(500).send("Error hashing the password");b
+            }
+        } else {
+            res.status(400).send({ message: "Token not found" });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("An error occurred");
+    }
+};
+
+
 
 module.exports = {
     register,
     Login,
-    updatePassword
+    updatePassword,
+    forgetPassword,
+    resetPassword
 };

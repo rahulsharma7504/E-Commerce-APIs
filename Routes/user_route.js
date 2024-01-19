@@ -33,4 +33,11 @@ app.get('/login/auth',Auth,(req,res)=>{
 app.post('/update_password', userController.updatePassword);
 
 
+//User Forget-Password
+
+app.post('/forget_password', userController.forgetPassword);
+//User Reset_Password
+app.get('/reset-password', userController.resetPassword);
+
+
 module.exports = app;

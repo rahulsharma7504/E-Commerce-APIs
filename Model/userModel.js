@@ -25,6 +25,10 @@ const schema = mongoose.Schema({
         type: String,
         required: true
     },
+    rendom: {
+        type: String,
+        required: true
+    }
 });
 
 const User_model = mongoose.model('User', schema);

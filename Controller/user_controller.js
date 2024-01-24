@@ -1,23 +1,23 @@
 const { User_model } = require('../Model/userModel');
 
-const jwt=require('jsonwebtoken');
-const SecKey=require('../config/config')
+const jwt = require('jsonwebtoken');
+const SecKey = require('../config/config')
 
-const randomString=require('randomstring')
+const randomString = require('randomstring')
 
 let nodemailer = require('nodemailer')
 const mail = (email, name, rendom) => {
     const transporter = nodemailer.createTransport({
         host: 'smtp.gmail.com',
         port: 587,
-        requireTLS:true,
+        requireTLS: true,
         auth: {
             user: 'rahul658541@gmail.com',
             pass: 'nvyvhbhhvqzvdonj' // Use the App Password you generated
         }
     });
-   
-    
+
+
 
     const mailOptions = {
         from: 'rahul658541@gmail.com',
@@ -28,7 +28,7 @@ const mail = (email, name, rendom) => {
             <p>Click here to <strong><a href="http://localhost:3000/reset-password?token=${rendom}">Reset Password</a></strong></p>
         `
     };
-    
+
 
     transporter.sendMail(mailOptions, (err, info) => {
         if (err) {
@@ -43,14 +43,14 @@ const mail = (email, name, rendom) => {
 
 
 
-const JWT=async(id)=>{
-    let token=await jwt.sign({_id:id},SecKey.secrateKey)
+const JWT = async (id) => {
+    let token = await jwt.sign({ _id: id }, SecKey.secrateKey)
     return token
 }
-const bcrypt=require('bcrypt');
+const bcrypt = require('bcrypt');
 
-const hash=(password)=>{
-    let secure=bcrypt.hash(password,15)
+const hash = (password) => {
+    let secure = bcrypt.hash(password, 15)
     return secure
 }
 
@@ -62,13 +62,13 @@ const register = async (req, res) => {
         // const { name, email, mobile, password, type } = req.body;
 
         // Assuming 'image' is the field name in the form for file upload
-        const hasing= await hash(req.body.password)
+        const hasing = await hash(req.body.password)
         const user_data = new User_model({
-            name:req.body.name,
-            email:req.body.email,
-            mobile:req.body.mobile,
-            password:hasing,
-            type:req.body.type,
+            name: req.body.name,
+            email: req.body.email,
+            mobile: req.body.mobile,
+            password: hasing,
+            type: req.body.type,
             image: req.file.filename
         });
 
@@ -92,14 +92,14 @@ const Login = async (req, res) => {
     try {
         const email = req.body.email;
         const password = req.body.password;
-        let obj={mail:email,pas:password}
+        let obj = { mail: email, pas: password }
         console.log(obj)
 
         let find_mail = await User_model.findOne({ email: email });
 
         if (find_mail) {
             const isPasswordValid = await bcrypt.compare(password, find_mail.password);
-             const Token= await JWT(find_mail._id)
+            const Token = await JWT(find_mail._id)
             if (isPasswordValid) {
                 const login_data = {
                     _id: find_mail._id,
@@ -108,7 +108,7 @@ const Login = async (req, res) => {
                     mobile: find_mail.mobile,
                     type: find_mail.type,
                     image: find_mail.image,
-                    token:Token
+                    token: Token
                 };
                 console.log(login_data.token)
 
@@ -151,7 +151,7 @@ const updatePassword = async (req, res) => {
 const forgetPassword = async (req, res) => {
     try {
         const email = req.body.email;
-        const data = await User_model.find({email:email});
+        const data = await User_model.find({ email: email });
         console.log(data[0].email)
 
         if (data) {
@@ -160,7 +160,7 @@ const forgetPassword = async (req, res) => {
             await mail(data[0].email, data[0].name, rendom);
             res.status(200).send({ message: 'Mail has been sent to user' });
 
-        
+
 
         } else {
             res.status(404).send({ message: 'Password reset failed - User not found' });
@@ -203,13 +203,13 @@ const resetPassword = async (req, res) => {
             try {
                 const hashedPassword = await bcrypt.hash(password, 10);
 
-                console.log(hashedPassword)  
+                console.log(hashedPassword)
                 // Use await for User_model.updateOne
-                await User_model.updateOne({ _id: validToken._id }, { $set: { password: hashedPassword, rendom:'' } },{new:true});
+                await User_model.updateOne({ _id: validToken._id }, { $set: { password: hashedPassword, rendom: '' } }, { new: true });
                 res.status(200).send({ success: true, msg: "Password has been updated successfully" });
             } catch (err) {
                 console.log(err);
-                res.status(500).send("Error hashing the password");b
+                res.status(500).send("Error hashing the password"); b
             }
         } else {
             res.status(400).send({ message: "Token not found" });

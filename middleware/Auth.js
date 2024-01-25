@@ -1,24 +1,29 @@
-const SecKey=require('../config/config');
+const SecKey = require('../config/config');
 const jwt = require('jsonwebtoken');
 
 const JWT = async (req, res, next) => {
-    const token = req.body.token || req.query.token || req.headers['token'];
-    if (!token) {
-        res.status(200).send({ msg: "Token not found" });
-    }else{
-        try {
-            jwt.verify(token, SecKey.secrateKey, (err, decoded) => {
-                if (err) throw err;
-                req.user = decoded;
-                res.status(200).send({ mes: "Successfully token has been verified" });
-                console.log(decoded)
-                next();
-            });
-        } catch (error) {
-            res.status(400).send('Token errojjjhr: ' + error.message);
-        }
+  
+  const Token = req.body.Authorization || req.query.Authorization || req.headers['Authorization'] || req.headers['Authorization']; // Also check Authorization header
+  if (!Token) {
+    return res.status(401).send({ msg: "Token not found" }); // Use 401 for unauthorized
+  }try {
+    const decoded = jwt.verify(Token, SecKey.secrateKey);
+    console.log(decoded.foo);
+    console.log('Decoded token:', decoded);
+    next();
+  } catch (error) {
+    if (error instanceof jwt.TokenExpiredError) {
+      return res.status(401).send('Token expired');
+    } else if (error instanceof jwt.JsonWebTokenError) {
+      return res.status(401).send('Invalid token');
+    } else {
+      console.error('Unexpected error:', error);
+      return res.status(500).send('Internal server error');
     }
+  }
+  
     
+  
 };
 
-module.exports=JWT
+module.exports = JWT;

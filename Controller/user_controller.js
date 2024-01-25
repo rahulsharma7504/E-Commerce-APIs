@@ -108,9 +108,9 @@ const Login = async (req, res) => {
                     mobile: find_mail.mobile,
                     type: find_mail.type,
                     image: find_mail.image,
-                    token: Token
+                    Authorization: Token
                 };
-                console.log(login_data.token)
+                console.log(login_data.Authorization)
 
                 res.status(200).send({ message: true, Authentication: "Successful", login_data });
             } else {

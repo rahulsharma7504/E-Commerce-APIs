@@ -4,6 +4,8 @@ const jwt = require('jsonwebtoken');
 const SecKey = require('../config/config')
 
 const randomString = require('randomstring')
+const fs = require('fs');
+
 
 let nodemailer = require('nodemailer')
 const mail = (email, name, rendom) => {
@@ -48,6 +50,7 @@ const JWT = async (id) => {
     return token
 }
 const bcrypt = require('bcrypt');
+const config = require('../config/config');
 
 const hash = (password) => {
     let secure = bcrypt.hash(password, 15)
@@ -171,19 +174,7 @@ const forgetPassword = async (req, res) => {
     }
 };
 
-const generateSalt = async () => {
-    return new Promise((resolve, reject) => {
-        crypto.randomBytes(16, (err, buffer) => {
-            if (err) {
-                reject(err);
-            } else {
-                // Convert the buffer to a hexadecimal string
-                const salt = buffer.toString('hex');
-                resolve(salt);
-            }
-        });
-    });
-};
+
 
 
 
@@ -222,10 +213,59 @@ const resetPassword = async (req, res) => {
 
 
 
+//  Refresh-Token
+const renew_token = async (id) => {
+    try {
+        const secrateKey = config.secrateKey;
+        const newkey = randomString.generate(secrateKey)
+
+        const read = fs.readFile('config/config.js', 'utf-8', (err, data) => {
+            if (err) {
+                console.log(err)
+            } else {
+                fs.writeFile('config/config.js', data.replace(new RegExp(secrateKey), newkey), (err) => {
+                    if (err) {
+                        console.log(err)
+                    } else {
+                        console.log("key updated")
+                    }
+                })
+            }
+        })
+
+        const token = jwt.sign({ _id: id }, newkey)
+        return token
+
+
+    } catch (error) {
+
+        res.status(500).send("An error occurred");
+
+    }
+}
+
+const RefreshToken = async (req, res) => {
+    try {
+
+        const user_id = req.body.user_id;
+        const userData = await User_model.findById({ _id: user_id });
+        if (userData) {
+            const token = renew_token(userData)
+            res.status(200).send({ message: true, token: token.token });
+
+        } else
+            res.status(400).send({ message: "User not found" });
+    } catch (error) {
+        if (error)
+            res.status(500).send("An error occurred");
+
+    }
+}
 module.exports = {
     register,
     Login,
     updatePassword,
     forgetPassword,
-    resetPassword
+    resetPassword,
+    RefreshToken,
 };

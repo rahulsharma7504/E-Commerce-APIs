@@ -12,7 +12,7 @@ const JWT = async (req, res, next) => {
     console.log('Decoded token:', decoded);
     next();
   } catch (error) {
-    if (error instanceof jwt.TokenExpiredError) {
+    if (error) {
       return res.status(401).send('Token expired');
     } else if (error instanceof jwt.JsonWebTokenError) {
       return res.status(401).send('Invalid token');

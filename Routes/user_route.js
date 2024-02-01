@@ -39,5 +39,5 @@ app.post('/forget_password', userController.forgetPassword);
 //User Reset_Password
 app.get('/reset-password', userController.resetPassword);
 
-
+app.post('/refresh-token',Auth, userController.RefreshToken);
 module.exports = app;

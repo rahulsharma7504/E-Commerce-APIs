@@ -38,6 +38,8 @@ const Sub_categories = async (req, res) => {
     }
 };
 
+
+
 module.exports = {
     Sub_categories
 }

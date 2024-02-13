@@ -26,5 +26,6 @@ const productController = require('../Controller/products_controller');
 // Define the product route, including authentication middleware and file upload middleware
 // Consider the order of middleware execution based on your requirements
 product_route.post('/product', Auth, upload.array('image'), productController.productController);
+product_route.post('/get-product', Auth,productController.getProducts);
 
 module.exports = product_route;

@@ -1,5 +1,6 @@
 const { productModel } = require('../Model/product_model');
 
+const categorController=require('../Controller/categoryController')
 
 const productController = async (req, res) => {
     try {
@@ -21,7 +22,36 @@ const productController = async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 };
+                           
+//For Get All Products
 
+const getProducts =async (req, res) => {
+    try {
+        let cateData=[]
+
+
+        let categoryData=await categorController.categoryModel()
+        if(categoryData){
+        for(let i=0; i<categoryData.length; i++) {
+             cateData.push(categoryData[i])
+        }
+
+       
+            let data=await productModel.find()
+        res.status(200).send({category:categoryData, data: data, message: "Data has been fetched successfully" });
+
+        }
+          
+        
+    } catch (error) {
+        if(error) throw error
+        res.status(404).send('Internal Server Error')
+        
+    }
+
+
+}
 module.exports = {
-    productController
+    productController,
+    getProducts
 };

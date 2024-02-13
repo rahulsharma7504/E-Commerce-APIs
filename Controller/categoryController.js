@@ -35,6 +35,19 @@ try {
 }
 }
 
+const categoryModel =async()=>{
+    try {
+
+            let data=await CategoryModel.find();
+            return data
+        
+    } catch (error) {
+        if(error) return error.message
+        
+    }
+}
+
 module.exports={
-    categoryData
+    categoryData,
+    categoryModel
 }

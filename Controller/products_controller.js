@@ -22,13 +22,13 @@ const productController = async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 };
-                           
+                       
 //For Get All Products
 
 const getProducts =async (req, res) => {
     try {
         let cateData=[]
-
+        
 
         let categoryData=await categorController.categoryModel()
         if(categoryData){
@@ -51,7 +51,29 @@ const getProducts =async (req, res) => {
 
 
 }
+
+ 
+
+const searchProducts = async (req, res) => {
+    try {
+        let product=req.body.product;
+        const name = await productModel.find({name:{$regex:new RegExp(product,"i")}})
+
+        if(name.length>0) {
+            res.status(200).send({data: name, message: "Data has been fetched successfully" });
+
+        }
+    } catch (error) {
+      if(error) throw error
+      res.status(404).send('Internal Server Error')
+      
+    }
+  }
+  
+
+
 module.exports = {
     productController,
-    getProducts
+    getProducts,
+    searchProducts
 };

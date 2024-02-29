@@ -34,6 +34,10 @@ app.use('/sub-category',product_route)
 const produc_route = require('./Routes/product_rout')
 app.use('/api',produc_route)
 
+// for count all data routes
+const common_route=require('./Routes/common.route');
+
+app.use('/',common_route)
 app.listen(3000,()=>{
     console.log('Server Start on port 3000')
 })

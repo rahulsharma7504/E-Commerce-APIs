@@ -38,6 +38,38 @@ const Store = async (req, res) => {
     }
 };
 
+// For Find_Store
+
+const Find_store = async (req, res) => {
+    try {
+        const lat = parseFloat(req.body.Latitude);
+        const lng = parseFloat(req.body.Longitude);
+
+        const result = await store_model.aggregate([
+            {
+               $geoNear:{
+                near:{type:"Point",coordinates:[lat,lng]},
+                key:"location",
+                maxDistance:1000*1609, // 1609 meters in a mile
+                spherical:true,
+                distanceField:"dist.calculated",
+                
+               }
+            }
+        ]);
+
+        // Process the result as needed, for example, send it in the response
+        res.status(200).send({ msg: "success", data: result });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+    }
+}
+
+
+
+
 module.exports = {
-    Store
+    Store,
+    Find_store
 };

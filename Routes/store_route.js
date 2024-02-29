@@ -21,5 +21,7 @@ const store_controllers = require('../Controller/store_controllers');
 
 // Ensure that Auth middleware returns a function that acts as a middleware
 store_route.post('/store',Auth ,upload.single('logo'),store_controllers.Store);
+store_route.post('/find-store',Auth ,store_controllers.Find_store);
+
 
 module.exports = store_route;

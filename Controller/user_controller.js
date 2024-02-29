@@ -28,6 +28,10 @@ const mail = (email, name, rendom) => {
         html: `
             <h1>${name}, Please Reset Password</h1>
             <p>Click here to <strong><a href="http://localhost:3000/reset-password?token=${rendom}">Reset Password</a></strong></p>
+            <button>Save</button>
+            <button>Cancel</button>
+            <p>Your Verification Code is : ${rendom}</p>
+          
         `
     };
 
@@ -89,8 +93,7 @@ const register = async (req, res) => {
     }
 };
 
-
-// use Login
+// use Login    
 const Login = async (req, res) => {
     try {
         const email = req.body.email;

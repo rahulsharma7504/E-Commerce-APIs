@@ -38,6 +38,19 @@ app.use('/api',produc_route)
 const common_route=require('./Routes/common.route');
 
 app.use('/',common_route)
+
+// for Ad to Cart routes
+const CartRoute=require('./Routes/add-to-cart');
+
+app.use('/',CartRoute)
+
+// for Address
+const Addressroute=require('./Routes/address')
+
+app.use('/',Addressroute)
+
+// error handling middleware
+
 app.listen(3000,()=>{
     console.log('Server Start on port 3000')
 })

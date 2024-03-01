@@ -69,11 +69,25 @@ const searchProducts = async (req, res) => {
       
     }
   }
-  
+
+  // for Sorting and searching databases
+  const Pagination = async (req, res) => {
+    try {
+        let page=req.body.page;
+        let sort=req.body.sort;
+
+        let data=await productModel.find().skip((page-1)*2).limit(3).sort(sort)
+        res.status(200).send({data: data, message: "Data has been fetched successfully" });
+    }catch(err){    
+        console.log(err);
+        res.status(500).json({message:"Error in sorting the data."})
+    }
+}
 
 
 module.exports = {
     productController,
     getProducts,
-    searchProducts
+    searchProducts,
+    Pagination
 };

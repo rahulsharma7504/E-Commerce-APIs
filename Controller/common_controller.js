@@ -14,10 +14,7 @@ const Count_data = async (req, res) => {
             category: await CategoryModel.countDocuments(),
             subCategory: await sub_category.countDocuments()
         }
-            // store_model.countDocuments(),
-            // productModel.countDocuments(),
-            // CategoryModel.countDocuments(),
-            // sub_category.countDocuments()
+            
 
         data.push({
            count:store

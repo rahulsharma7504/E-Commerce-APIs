@@ -28,5 +28,6 @@ const productController = require('../Controller/products_controller');
 product_route.post('/product', Auth, upload.array('image'), productController.productController);
 product_route.post('/get-product', Auth,productController.getProducts);
 product_route.post('/search_products', Auth,productController.searchProducts);
+product_route.post('/pagination', Auth,productController.Pagination);
 
 module.exports = product_route;
